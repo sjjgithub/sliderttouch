@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			ul,
+			ol {
+				list-style: none;
+			}
+			
+			.control {
+				width: 20px;
+				height: 20px;
+				line-height: 20px;
+				text-align: center;
+				color: #fff;
+				background-color: green;
+				float: left;
+				margin-right: 5px;
+				cursor: pointer;
+				
+			}
+			
+			.control.active,.control:hover {
+				background-color: #FF7F50;
+			}
+		</style>
+		<script type="text/javascript" src="js/jquery-1.4.2.min.js">
+		</script>
+		<script type="text/javascript">
+			$(function() {
+				slider({
+					dom: ".slider",
+					con: "ul",
+					time: 3000,
+					intertime: 500,
+					control: "control",
+					conactive: "active",
+					index: 0,
+					mode: 2,
+					isAuto: true,
+					direction: true
+				})
+
+				function slider(opt) {
+					var dom = opt.dom //定义dom属性
+					var dis=$(dom).parent().outerWidth();	
+					var isAuto = opt.isAuto;
+					var con = $(opt.dom + " " + opt.con);
+					var len = con.children("li").length;
+					var first = con.children("li").get(0);
+					var last = con.children("li").get(len - 1);
+					var time = opt.time;
+					var intertime = opt.intertime;
+					var interId;
+					var index = opt.index;
+					var mode = opt.mode;
+					var hei = $(first).outerHeight();
+					var direction = opt.direction
+					var controls;
+					init();
+					if(isAuto){
+					auto();	
+					}
+					
+					bindDom();
+
+					function init() {
+
+						con.wrap("<div class='sliderBox'></div>");
+						$(dom).append("<ul class='controls'></ul>");
+						controls = $(dom + " .controls")
+						controls.css({
+							"position": "absolute",
+							"right": 0,
+							"bottom": "15px"
+						});
+						var sliderBox = $(dom + " .sliderBox")
+						
+						function init1(){
+						con.append($(first).clone());
+						con.prepend($(last).clone());
+						index = index + 1;
+						$(dom + " .sliderBox li a img").css({
+								"width": dis,"height":"auto"
+							})
+							
+							hei=$(first).outerHeight();
+					$(dom).css({
+								"position": "relative",
+								"width": dis,
+								"height": hei,
+								"overflow": "hidden"
+							})
+						}	
+						if (mode == 1) {
+							init1();
+							$(dom + " .sliderBox li").css({
+								"float": "left"
+							})
+							sliderBox.css({
+								"width": dis * (len + 2) + "px",
+								"height": hei
+							})
+							con.css({
+								"left": (index * dis * (-1)) + "px",
+								"position": "relative"
+							})
+							
+						}
+						if (mode == 2) {
+							init1();
+							sliderBox.css({
+								"height": hei * (len + 2) + "px"
+							})
+							con.css({
+								"top": (index * hei * -1) + "px",
+								"position": "relative"
+							})
+							
+						}
+						if(mode==3){
+							index=index+1;
+							$(dom + " .sliderBox li a img").css({
+								"width": dis,"height":"auto"
+							})
+						hei=$(first).outerHeight();
+					$(dom).css({
+								"position": "relative",
+								"width": dis,
+								"height": hei,
+								"overflow": "hidden"
+							})
+							
+							sliderBox.css({
+								"height": hei+ "px",
+								"width":dis+"px",
+							})
+							con.css({
+								"position": "relative"
+							})
+//							$(dom+" .sliderBox li").css({
+//								"position": "absolute",
+//								"left":0,
+//								"top":0,
+//								"opacity":0,
+//							})
+							$(dom+" .sliderBox li").hide();
+							$(dom+" .sliderBox li:eq("+(index-1)+")").fadeIn(time);
+						}
+						if (opt.control) {
+							for (var i = 0; i < len; i++) {
+								controls.append("<li class='" + opt.control + "'>" + (i + 1) + "</li>");
+							}
+							
+						} else {
+							for (var i = 0; i < len; i++) {
+								controls.append("<li>" + (i + 1) + "</li>");
+							}
+							controls.children("li").css({
+								"width": "20px",
+								"height": "20px",
+								"line-height": "20px",
+								"text-align": "center",
+								"color": "#fff",
+								"background-color": "green",
+								"float": "left",
+								"margin-right": " 5px",
+								"cursor": "pointer",
+							})
+						}
+					
+							if (opt.control) {
+							$(".controls li:eq(" + (index - 1) + ")").addClass(opt.conactive)
+						} else {
+							$(".controls li:eq(" + (index - 1) + ")").css("background-color", " #FF7F50")
+							$(".controls li:eq(" + (index - 1) + ")").addClass("active")
+						}
+						
+						
+					}
+
+					function goslider() {
+						if (mode == 1) {
+							con.animate({
+								"left": (index * dis * -1) + "px"
+							}, intertime, anfn);
+
+							function anfn() {
+								if (index >= len + 1) {
+									con.css("left", (dis * -1) + "px")
+									index = 1;
+								}
+								if (index <= 0) {
+									con.css("left", (len * dis * (-1)) + "px")
+									index = len;
+								}
+								diancheck();
+							} //anfned
+						} //mode==1 ed	
+						if (mode == 2) {
+							con.animate({
+								"top": (index * hei * -1) + "px"
+							}, intertime, anfn2);
+
+							function anfn2() {
+								if (index >= len + 1) {
+									con.css("top", (hei * -1) + "px")
+									index = 1;
+								}
+								if (index <= 0) {
+									con.css("top", (len * hei * (-1)) + "px")
+									index = len;
+								}
+								diancheck();
+							} //anfned
+						}
+						if(mode==3){
+							diancheck();
+					$(dom+" .sliderBox li:visible").fadeOut();
+					$(dom+" .sliderBox li:eq("+(index-1)+")").fadeIn(2000,fn3) 
+							function fn3(){
+								console.log(index)
+								
+								if(index>=len){
+									
+									index=0;
+								}
+								if(index<0){
+									index=len-1;
+								}	
+							}
+						}
+							function diancheck(){
+								if (opt.control) {
+									$(".controls li" + "." + opt.conactive).removeClass(opt.conactive)
+									$(".controls li:eq(" + (index - 1) + ")").addClass(opt.conactive);
+								} else {
+									$(".controls li.active").css("background-color", "green")
+									$(".controls li.active").removeClass("active");
+									$(".controls li:eq(" + (index - 1) + ")").css("background-color", " #FF7F50");
+									$(".controls li:eq(" + (index - 1) + ")").addClass("active")
+								}
+							}
+					}
+
+						function auto() {
+							interId = setInterval(function() {
+								if (direction) {
+									index++;
+								} else {
+									index--;
+								}
+								goslider();
+							}, time)
+						}
+
+
+					function bindDom() {
+						$(dom).hover(function() {
+							clearInterval(interId);
+						}, function() {
+							auto();
+						})
+						controls.children("li").click(function() {
+							index = controls.children("li").index($(this)) + 1;
+							goslider();
+						})
+						
+//						document.addEventListener("touchstart",tstart,false);
+//						document.addEventListener("touchmove",tmove,false);
+//						document.addEventListener("touchend",tend,false);
+//						$(document).addEventListener("touchstart",tstart,false)
+////						$(document).bind("touchstart",tstart);
+////						$(document).bind("touchmove",tmove);
+////						$(document).bind("touchend",tend);
+//						
+//						var startY=0;//点击开始是纪录y距离
+//						var startX=0;
+//						var offsetY=0;//偏差的y距离
+//						var offsetY=0;
+//						var domX=$(dom).offset().left;
+//						var domY=$(dom).offset().top;
+//						if(mode==1){
+//							function tstart(e){
+//								clearInterval(interId);
+//								startY=e.targetTouches[0].pageY;
+//								startX=e.targetTouches[0].pageX;
+//								console.log(startX+","+startY)
+//							}
+//							function tmove(e){
+//								
+//							}
+//							function tend(e){
+//								auto();
+//							}
+//						}
+						
+					}
+				}
+			})
+		</script>
+	</head>
+
+	<body>
+		<div class="slider">
+			<ul>
+				<li>
+					<a href=""><img src="ads/1.gif" alt="" /></a>
+				</li>
+				<li>
+					<a href=""><img src="ads/2.gif" alt="" /></a>
+				</li>
+				<li>
+					<a href=""><img src="ads/3.gif" alt="" /></a>
+				</li>
+				<li>
+					<a href=""><img src="ads/4.gif" alt="" /></a>
+				</li>
+				<li>
+					<a href=""><img src="ads/5.gif" alt="" /></a>
+				</li>
+			</ul>
+		</div>
+	</body>
+
+</html>
